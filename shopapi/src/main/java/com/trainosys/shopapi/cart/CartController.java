@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class CartController {
     @GetMapping("/{userId}")
     public CartItem getMethodName(@PathVariable  int userId) {
-        return new CartItem(1, 12);
+
+        return new CartItem(userId, 12);
     }
     @GetMapping("/{userId}/total")
     public int getTotal(@PathVariable  int userId) {
+
         return 100;
     }
     @PostMapping("/{userId}/items")
