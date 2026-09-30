@@ -1,12 +1,13 @@
 package com.trainosys.shopapi.cart;
 
+import lombok.AllArgsConstructor;
 import lombok.Setter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 @Getter
 @Setter 
-@RequiredArgsConstructor 
+@AllArgsConstructor
 public class CartItem {
-    private final int productId;
-    private final int quantity;
+    private Long productId;
+    private int quantity;
 }

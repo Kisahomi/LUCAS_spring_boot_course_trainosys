@@ -1,5 +1,8 @@
 package com.trainosys.shopapi.cart;
 
+import com.trainosys.shopapi.product.ProductService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trainosys.shopapi.product.Product;
@@ -14,45 +17,56 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/carts")
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class CartController {
-    @GetMapping("/{userId}")
-    public CartItem getMethodName(@PathVariable  int userId) {
 
-        return new CartItem(userId, 12);
-    }
-    @GetMapping("/{userId}/total")
-    public int getTotal(@PathVariable  int userId) {
+    private final CartService cartService;
+    private final ProductService productService;
 
-        return 100;
-    }
-    @PostMapping("/{userId}/items")
-    public Product postMethodName(@PathVariable  int userId, @RequestBody Product entity) {
-        //TODO: process POST request
-        
-        return entity;
-    }
-    
-    @PutMapping("{userId}/items/{productId}")
-    public CartItem putMethodName(@PathVariable int userId, @PathVariable int productId, @RequestBody int quantity) {
-        //TODO: process PUT request
-        
-        return new CartItem(productId, quantity);
+    @GetMapping("/public/carts/{userId}")
+    public ResponseEntity<Cart> getCartByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(cartService.getCartByUserId(userId));
     }
 
-    @DeleteMapping ("/{userId}")
-    public String deleteMethodName(@PathVariable String userId) {
-        //TODO: process PUT request
-        
-        return "Cleared the whole cart";
+    @PostMapping("/public/carts/{userId}/items")
+    public ResponseEntity<Cart> addItemToCart(@PathVariable Long userId, @RequestBody CartItem item) {
+        return ResponseEntity.ok(cartService.addItemToCart(userId, item));
     }
-    @DeleteMapping ("/{userId}/items/{productId}")
-    public String deleteSpecific(@PathVariable int userId, @PathVariable int productId) {
-        //TODO: process PUT request
-        
-        return "Removed the product with ID: " + productId;
+
+    @PutMapping("/public/carts/{userId}/items/{productId}")
+    public ResponseEntity<Cart> updateCartItemQuantity(
+            @PathVariable Long userId,
+            @PathVariable Long productId,
+            @RequestParam int quantity) {
+        return ResponseEntity.ok(cartService.updateCartItemQuantity(userId, productId, quantity));
+    }
+
+    @DeleteMapping("/public/carts/{userId}/items/{productId}")
+    public ResponseEntity<Cart> removeItemFromCart(
+            @PathVariable Long userId,
+            @PathVariable Long productId) {
+        return ResponseEntity.ok(cartService.removeItemFromCart(userId, productId));
+    }
+
+    @DeleteMapping("/public/carts/{userId}")
+    public ResponseEntity<String> clearCart(@PathVariable Long userId) {
+        cartService.clearCart(userId);
+        return ResponseEntity.ok("Cart cleared successfully.");
+    }
+
+    @GetMapping("/admin/carts")
+    public ResponseEntity<List<Cart>> getAllCarts() {
+        return ResponseEntity.ok(cartService.getAllCarts());
+    }
+
+    @GetMapping("/public/carts/{userId}/total")
+    public ResponseEntity<Double> getCartTotal(@PathVariable Long userId) {
+        double total = cartService.getCartTotal(userId, productService);
+        return ResponseEntity.ok(total);
     }
 }

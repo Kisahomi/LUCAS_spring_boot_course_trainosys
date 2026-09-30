@@ -1,5 +1,8 @@
 package com.trainosys.shopapi.user;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -17,39 +20,39 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 
+@RequiredArgsConstructor
 @RestController 
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 public class UserController {
+    private final UserService userService;
+    @GetMapping("/admin/users")
+    public ResponseEntity<List<User>> getAllUsers() {
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return new ArrayList<>();
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable int id) {
-        return new User(1,"test name","test email");
+    @GetMapping("/admin/users/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
-    @GetMapping("/email/{email}")
-    public User getUserByEmail(@PathVariable String email) {
-        return new User(1,"test name", email);
+    @GetMapping("/admin/users/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
     }
-    @PostMapping
-    public User postMethodName(@RequestBody User entity) {
-        //TODO: process POST request
-        
-        return entity;
+    @PostMapping("/public/users")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
-    @PutMapping("/{id}")
-    public User putMethodName(@PathVariable int id, @RequestBody User user) {
-        //TODO: process PUT request
-        User userUpdate = new User(id, user.getName(), user.getEmail());
-        return userUpdate;
+
+    @PutMapping("/admin/users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
     }
-    @DeleteMapping("/{id}")
-    public String deleteMethodName(@PathVariable int id) {
-        //TODO: process PUT request
-        
-        return "Deleted User with ID: " + id;
+
+    @DeleteMapping("/admin/users/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        String responseMessage = userService.deleteUser(id);
+        return ResponseEntity.ok(responseMessage);
     }
 }

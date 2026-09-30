@@ -1,5 +1,6 @@
 package com.trainosys.shopapi.product;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,50 +15,53 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 
 
-@RestController 
-@RequestMapping("/api/products")
+@RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class ProductController {
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return new ArrayList<>();
-    }
-    @GetMapping("/{id}")
-    public Product getProductById(@PathVariable int id) {
-        return new Product(1,"test name",1.0, "test category", 2);
-    }
-    @GetMapping("/category/{categoryId}")
-    public List<Product> getProductByCategory(@PathVariable int categoryId) {
-        return new ArrayList<>();
+
+    private final ProductService productService;
+
+    @GetMapping("/public/products")
+    public ResponseEntity<List<Product>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    @PostMapping
-    public Product postMethodName(@RequestBody Product entity) {
-        //TODO: process POST request
-        
-        return entity;
+    @GetMapping("/public/products/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
-    @PutMapping("/{id}")
-    public Product putMethodName(@PathVariable int id, 
-        @RequestBody Product product
-    ) {
-        //TODO: process PUT request
-        Product productUpdate = new Product(id, product.getName(), product.getPrice(), product.getCategory(), product.getStock());
-        return productUpdate;
+
+    @GetMapping("/public/products/category/{category}")
+    public ResponseEntity<List<Product>> getProductByCategory(@PathVariable String category) {
+        return ResponseEntity.ok(productService.getProductByCategory(category));
     }
-    @PutMapping("/{id}/stock/{quantity}")
-    public Product putStock(@PathVariable int id, @PathVariable int quantity,@RequestBody  Product product) {
-        //Product product = getProductById(id); <--- this should work kaya lng walang actual stuff
-        
-        Product productUpdate = new Product(id, product.getName(), product.getPrice(), product.getCategory(), quantity);
-        return productUpdate;
+
+    @PostMapping("/admin/products")
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        Product createdProduct = productService.createProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
-    @DeleteMapping("/{id}")
-    public String deleteMethodName(@PathVariable int id) {
-        //TODO: process PUT request
-        
-        return "Deleted Product with ID: " + id;
+
+    @PutMapping("/admin/products/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+        return ResponseEntity.ok(productService.updateProduct(id, product));
+    }
+
+    @PutMapping("/admin/products/{id}/stock/{quantity}")
+    public ResponseEntity<Product> updateStock(@PathVariable Long id, @PathVariable int quantity) {
+        return ResponseEntity.ok(productService.updateStock(id, quantity));
+    }
+
+    @DeleteMapping("/admin/products/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+        String responseMessage = productService.deleteProduct(id);
+        return ResponseEntity.ok(responseMessage);
     }
 }
