@@ -1,0 +1,16 @@
+com\trainosys\shopapi\controller\CartController.class
+com\trainosys\shopapi\repository\UserRepository.class
+com\trainosys\shopapi\service\ProductServiceImpl.class
+com\trainosys\shopapi\model\CartItem.class
+com\trainosys\shopapi\controller\ProductController.class
+com\trainosys\shopapi\service\UserService.class
+com\trainosys\shopapi\ShopapiApplication.class
+com\trainosys\shopapi\service\CartServiceImpl.class
+com\trainosys\shopapi\model\User.class
+com\trainosys\shopapi\repository\ProductRepository.class
+com\trainosys\shopapi\controller\UserController.class
+com\trainosys\shopapi\service\CartService.class
+com\trainosys\shopapi\service\ProductService.class
+com\trainosys\shopapi\model\Product.class
+com\trainosys\shopapi\repository\CartRepository.class
+com\trainosys\shopapi\service\UserServiceImpl.class
